@@ -7,11 +7,6 @@ import asyncio
 from logging import info
 
 
-from . import server
-from .args import parse_args
-from .util import log_setup
-
-
 VERSION = "0.10"
 
 
@@ -19,6 +14,10 @@ def main():
     """
     launch sftdyn.
     """
+
+    from . import server
+    from .args import parse_args
+    from .util import log_setup
 
     args = parse_args(__doc__)
 
@@ -28,7 +27,8 @@ def main():
     # maps host => ip
     associations = dict()
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     loop.set_debug(args.debug)
 
     if args.http:

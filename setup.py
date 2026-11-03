@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from distutils.core import setup
+from setuptools import setup
 from sftdyn import VERSION
 from sys import version_info
 
@@ -23,6 +23,9 @@ setup(
     license="GPL3+",
     packages=["sftdyn"],
     scripts=["bin/sftdyn"],
+    install_requires=[
+        "aiohttp",
+    ],
     data_files=[
         ("/etc/sftdyn/", ["etc/sample.conf"]),
         ("/usr/lib/systemd/system/", ["etc/sftdyn.service"]),
