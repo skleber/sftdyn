@@ -114,7 +114,7 @@ class Server:
         iter(cmdlist)  # check if the generated updatecommand is iterable
         cmd = "\n".join(cmdlist) + "\n"
 
-        nsupdate = ['nsupdate', '-l']
+        nsupdate = ['nsupdate']
         if self.nskeyfile:
             nsupdate.extend(['-k', self.nskeyfile])
 
