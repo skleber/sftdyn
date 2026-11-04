@@ -1,6 +1,6 @@
 # sftdyn dynamic dns server
 
-`sftdyn` is a minimalistic dynamic DNS server that accepts update requests via `http` or `https` and forwards them to a locally running DNS server via `nsupdate -l`.
+`sftdyn` is a minimalistic dynamic DNS server that accepts update requests via `http` or `https` and forwards them to a DNS server via `nsupdate`.
 You can use it to easily update IPs of hosts in a domain whose IPs are not static and change to unpredictable addresses.
 
 It lets you easily create a dyndns.org-like service, using your own DNS server, and can (probably) be used with your router at home.
@@ -374,6 +374,13 @@ The conf file is interpreted as python code, so you can do arbitrarily complex s
 `sftdyn` is pretty minimalistic, and written in python, so it's unlikely to contain any security vulnerabilities. The python ssl and http modules are used widely, and open-source, so there _should_ be no security vulnerabilities there.
 
 Somebody who knows a valid udpate key could semi-effectively DOS your server by spamming update requests from two different IPs. For each request, nsupdate would be launched and your zone file updated.
+
+## Maintainer & Fork Credits
+
+This repository is maintained by [Stephan Kleber](https://github.com/skleber) (`stephan@skleber.de`) as an active fork of the original [SFTtech/sftdyn](https://github.com/SFTtech/sftdyn) project.
+
+- **Current Maintainer**: [Stephan Kleber](https://github.com/skleber) (`stephan@skleber.de`) — Fork maintainer, modernization for Python 3.13+, test suite, subprocess error handling, timeout protection, and architecture improvements (contributed and directed via prompt tokens & engineering oversight).
+- **Original Author**: Michael Ensslin (`michael@ensslin.cc`) and the [SFTtech](https://github.com/SFTtech/sftdyn) contributors.
 
 ## Development
 

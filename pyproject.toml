@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sftdyn"
+version = "0.10"
+description = "HTTP(S)-based dynamic DNS updater server"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "GPL-3.0-or-later"}
+authors = [
+    {name = "Michael Ensslin", email = "michael@ensslin.cc"}
+]
+maintainers = [
+    {name = "Stephan Kleber", email = "stephan@skleber.de"}
+]
+keywords = ["dns", "dynamic-dns", "dyndns", "nsupdate", "bind"]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Topic :: Internet :: WWW/HTTP",
+    "Intended Audience :: Developers",
+    "Environment :: Console",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "aiohttp>=3.8.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.20.0",
+]
+
+[project.scripts]
+sftdyn = "sftdyn:main"
+
+[project.urls]
+Homepage = "https://github.com/skleber/sftdyn"
+Repository = "https://github.com/skleber/sftdyn"
+"Upstream Repository" = "https://github.com/SFTtech/sftdyn"
+
+[tool.setuptools]
+packages = ["sftdyn"]
+
+[tool.setuptools.data-files]
+"/etc/sftdyn/" = ["etc/sample.conf"]
+"/usr/lib/systemd/system/" = ["etc/sftdyn.service"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
