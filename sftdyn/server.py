@@ -5,6 +5,7 @@ http(s) server implementation for sftdyn.
 
 import ssl
 import asyncio
+import shlex
 
 from logging import info, debug
 from aiohttp import web
@@ -16,7 +17,7 @@ class Server:
     """
 
     def __init__(self, addr, get_host, associations, get_ip,
-            nsupdatecommands, nskeyfile=None, tls=None):
+            nsupdatecommands, nskeyfile=None, nsparams=None, tls=None):
 
         """
         addr: (ip, port) to listen on
@@ -25,6 +26,8 @@ class Server:
         get_ip: function that can update the ip to set, e.g. by headers
         nsupdatecommands: function to generate the `nsupdate` stdin,
                           will be called with `host` and `new_ip` args.
+        nskeyfile: optional keyfile for nsupdate
+        nsparams: optional parameter(s) for nsupdate command
         tls: (cerfilename, keyfilename) to use for the tls socket
         """
 
@@ -34,6 +37,12 @@ class Server:
         self.get_ip = get_ip
         self.nsupdatecommands = nsupdatecommands
         self.nskeyfile = nskeyfile
+        if nsparams is None:
+            self.nsparams = []
+        elif isinstance(nsparams, str):
+            self.nsparams = shlex.split(nsparams)
+        else:
+            self.nsparams = [str(p) for p in nsparams]
 
         if tls:
             # create SSLContext for our TLS server
@@ -115,6 +124,8 @@ class Server:
         cmd = "\n".join(cmdlist) + "\n"
 
         nsupdate = ['nsupdate']
+        if self.nsparams:
+            nsupdate.extend(self.nsparams)
         if self.nskeyfile:
             nsupdate.extend(['-k', self.nskeyfile])
 

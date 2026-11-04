@@ -342,6 +342,17 @@ Edit the nskeyfile option in the configuration file, by default located in
 nskeyfile = "/etc/bind/keys/sftdyn.key"
 ```
 
+#### Custom nsupdate parameters
+
+You can optionally specify custom parameter(s) for the `nsupdate` command, such as `-l` for local mode:
+
+Edit the `nsparams` option in the configuration file, by default located in
+`/etc/sftdyn/conf`:
+
+```
+nsparams = ["-l"]
+```
+
 ## About
 
 This software was written after the free `dyndns.org` service was shut down.

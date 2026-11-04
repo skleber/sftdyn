@@ -91,6 +91,9 @@ def parse_args(intro):
     if not hasattr(args, "get_ip"):
         setattr(args, 'get_ip', None)
 
+    if not hasattr(args, "nsparams"):
+        setattr(args, 'nsparams', getattr(args, 'nsupdateparams', None))
+
     if not hasattr(args, "nsupdatecommands"):
         cmd.error("config file does not define the `nsupdatecommands` function")
 
