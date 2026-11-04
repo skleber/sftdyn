@@ -18,11 +18,12 @@ def main() -> None:
     """
     Launch sftdyn server.
     """
-    from . import server
     from .args import parse_args
-    from .util import log_setup
 
     args = parse_args(__doc__)
+
+    from . import server
+    from .util import log_setup
 
     logger = log_setup(args.verbose - args.quiet)
 

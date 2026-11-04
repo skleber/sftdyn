@@ -76,9 +76,22 @@ We also can define a hostname to send the IP update requests to within the `dyn.
 
 ### sftdyn server setup
 
-To install *sftdyn*, use `pip install sftdyn` or `./setup.py install`.
+To install *sftdyn*, using [`pipx`](https://pypa.github.io/pipx/) is recommended for modern isolated application environments:
 
-Launch it with `python3 -m sftdyn [command-line options]`.
+```sh
+# Directly from git repository:
+pipx install git+https://github.com/skleber/sftdyn.git
+
+# Or from a local clone:
+pipx install .
+```
+
+Alternatively, install using `pip`:
+```sh
+pip install .
+```
+
+Launch it with `sftdyn [command-line options]` or `python3 -m sftdyn [command-line options]`.
 
 Configuration is by command-line parameters and conf file.
 A sample conf file is provided in `etc/sample.conf`.
