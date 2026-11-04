@@ -7,7 +7,7 @@ name = "sftdyn"
 version = "0.10"
 description = "HTTP(S)-based dynamic DNS updater server"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {text = "GPL-3.0-or-later"}
 authors = [
     {name = "Michael Ensslin", email = "michael@ensslin.cc"}
@@ -23,8 +23,6 @@ classifiers = [
     "Environment :: Console",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

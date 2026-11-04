@@ -30,7 +30,7 @@ setup(
             "sftdyn = sftdyn:main",
         ],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=[
         "aiohttp>=3.8.0",
     ],
@@ -55,8 +55,6 @@ setup(
         "Environment :: Console",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
