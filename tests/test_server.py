@@ -20,6 +20,9 @@ except ImportError:
     aiohttp_mock = MagicMock()
     web_mock = MagicMock()
     web_mock.Response = MockResponse
+    mock_server_instance = MagicMock()
+    mock_server_instance.shutdown = AsyncMock()
+    web_mock.Server.return_value = mock_server_instance
     aiohttp_mock.web = web_mock
     sys.modules["aiohttp"] = aiohttp_mock
     sys.modules["aiohttp.web"] = web_mock
@@ -260,6 +263,55 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
         resp = await s.handler(req)
         self.assertEqual(resp.status, 500)
         self.assertIn("FAIL", resp.text)
+
+    async def test_server_listen_and_close(self) -> None:
+        loop = asyncio.get_running_loop()
+        s = Server(
+            addr=("127.0.0.1", 0),
+            get_host=lambda k, ip: "host.example.com",
+            associations={},
+            get_ip=None,
+            nsupdatecommands=lambda h, ip, hdr: ["send"],
+        )
+        srv = await s.listen(loop)
+        self.assertIsNotNone(s.server)
+        self.assertIsNotNone(s.web_server)
+        await s.close()
+        self.assertIsNone(s.server)
+        self.assertIsNone(s.web_server)
+
+    async def test_server_close_with_active_connection(self) -> None:
+        if isinstance(web, MagicMock):
+            return
+
+        loop = asyncio.get_running_loop()
+        s = Server(
+            addr=("127.0.0.1", 0),
+            get_host=lambda k, ip: "host.example.com",
+            associations={},
+            get_ip=None,
+            nsupdatecommands=lambda h, ip, hdr: ["send"],
+        )
+        srv = await s.listen(loop)
+        if not hasattr(srv, "sockets") or not srv.sockets:
+            await s.close()
+            return
+
+        port = srv.sockets[0].getsockname()[1]
+        reader, writer = await asyncio.open_connection("127.0.0.1", port)
+        writer.write(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
+        await writer.drain()
+        await reader.readuntil(b"\r\n\r\n")
+
+        await asyncio.wait_for(s.close(), timeout=3.0)
+        self.assertIsNone(s.server)
+        self.assertIsNone(s.web_server)
+
+        writer.close()
+        try:
+            await writer.wait_closed()
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

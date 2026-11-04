@@ -79,6 +79,7 @@ class Server:
         self.nskeyfile = nskeyfile
         self.timeout = timeout
         self.server: asyncio.Server | None = None
+        self.web_server: web.Server | None = None
         self._host_locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
 
         if nsparams is None:
@@ -100,9 +101,9 @@ class Server:
         """
         Let the server listen on the given event loop.
         """
-        server = web.Server(self.handler)
+        self.web_server = web.Server(self.handler)
         self.server = await loop.create_server(
-            server,
+            self.web_server,
             self.addr[0],
             self.addr[1],
             ssl=self.sslcontext,
@@ -111,11 +112,24 @@ class Server:
 
     async def close(self) -> None:
         """
-        Close the server listening socket.
+        Close the server listening socket and active connections.
         """
         if self.server is not None:
             self.server.close()
-            await self.server.wait_closed()
+        if self.web_server is not None:
+            await asyncio.sleep(0)
+            if hasattr(self.web_server, "pre_shutdown"):
+                self.web_server.pre_shutdown()
+            if hasattr(self.web_server, "shutdown"):
+                shutdown_coro = self.web_server.shutdown(timeout=1.0)
+                if shutdown_coro is not None and hasattr(shutdown_coro, "__await__"):
+                    await shutdown_coro
+            self.web_server = None
+        if self.server is not None:
+            try:
+                await asyncio.wait_for(self.server.wait_closed(), timeout=2.0)
+            except asyncio.TimeoutError:
+                pass
             self.server = None
 
     async def handler(self, request: web.BaseRequest) -> web.Response:

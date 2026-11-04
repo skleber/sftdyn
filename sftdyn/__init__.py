@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import signal
+import sys
 
 VERSION = "0.10"
 __author__ = "Michael Ensslin <michael@ensslin.cc>"
@@ -76,6 +77,9 @@ def main() -> None:
     stop_event = asyncio.Event()
 
     def handle_signal() -> None:
+        if stop_event.is_set():
+            logger.warning("Forced exit requested by second termination signal.")
+            sys.exit(130)
         logger.info("Received termination signal, stopping server...")
         stop_event.set()
 
@@ -89,15 +93,26 @@ def main() -> None:
         await stop_event.wait()
         logger.info("Closing server listeners...")
         for s in servers:
-            await s.close()
+            try:
+                await s.close()
+            except Exception as e:
+                logger.debug("Error closing server: %s", e)
 
     try:
         loop.run_until_complete(run_until_stop())
     except KeyboardInterrupt:
         logger.info("Interrupted by user, exiting...")
         for s in servers:
-            loop.run_until_complete(s.close())
+            try:
+                loop.run_until_complete(s.close())
+            except Exception:
+                pass
     finally:
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            try:
+                loop.remove_signal_handler(sig)
+            except (NotImplementedError, RuntimeError):
+                pass
         pending = [t for t in asyncio.all_tasks(loop) if not t.done()]
         for task in pending:
             task.cancel()
